@@ -22,9 +22,6 @@
 		"client": [
 			"nx.pingwheel.fabric.Client"
 		],
-		"main": [
-			"nx.pingwheel.fabric.Main"
-		],
 		"modmenu": [
 			"nx.pingwheel.fabric.integration.ModMenuIntegration"
 		]

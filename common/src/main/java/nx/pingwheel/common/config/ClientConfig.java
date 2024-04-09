@@ -1,10 +1,12 @@
 package nx.pingwheel.common.config;
 
+import net.minecraft.client.MinecraftClient;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import nx.pingwheel.common.networking.UpdateChannelPacketC2S;
+import nx.pingwheel.common.networking.SideChannelNetworkHandler;
 
 @Getter
 @Setter
@@ -19,6 +21,7 @@ public class ClientConfig implements IConfig {
 	boolean directionIndicatorVisible = true;
 	boolean nameLabelForced = false;
 	int pingSize = 100;
+	String uri = "amqp://127.0.0.1:5672";
 	String channel = "";
 
 	// hidden from settings screen
@@ -37,6 +40,13 @@ public class ClientConfig implements IConfig {
 	}
 
 	public void onUpdate() {
-		new UpdateChannelPacketC2S(channel).send();
+		SideChannelNetworkHandler.getInstance().close();
+		MinecraftClient client = MinecraftClient.getInstance();
+		if (client == null) {
+			return;
+		}
+		if (client.isInSingleplayer() || client.getCurrentServerEntry() != null) {
+			SideChannelNetworkHandler.getInstance().connect(uri);
+		}
 	}
 }

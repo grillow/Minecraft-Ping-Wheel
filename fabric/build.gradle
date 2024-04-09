@@ -17,6 +17,7 @@ configurations {
 
 repositories {
     maven { url "https://maven.terraformersmc.com/releases" }
+    mavenCentral()
 }
 
 dependencies {
@@ -32,6 +33,10 @@ dependencies {
     modCompileOnly("com.terraformersmc:modmenu:${project.modmenu_version}") {
         exclude(group: "net.fabricmc.fabric-api")
     }
+
+    // RabbitMQ
+    implementation "com.rabbitmq:amqp-client:5.21.0"
+    include "com.rabbitmq:amqp-client:5.21.0"
 }
 
 processResources {

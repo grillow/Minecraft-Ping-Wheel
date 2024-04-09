@@ -20,8 +20,9 @@ public class SettingsScreen extends Screen {
 
 	private Screen parent;
 	private OptionListWidget list;
+	private TextFieldWidget uriTextField;
 	private TextFieldWidget channelTextField;
-
+	
 	public SettingsScreen() {
 		super(Text.translatable("ping-wheel.settings.title"));
 		this.config = ConfigHandler.getConfig();
@@ -59,7 +60,13 @@ public class SettingsScreen extends Screen {
 		final var pingSizeOption = getPingSizeOption();
 		this.list.addOptionEntry(nameLabelForcedOption, pingSizeOption);
 
-		this.channelTextField = new TextFieldWidget(this.textRenderer, this.width / 2 - 100, 160, 200, 20, Text.empty());
+		this.uriTextField = new TextFieldWidget(this.textRenderer, this.width / 2 - 100, 160, 200, 20, Text.empty());
+		this.uriTextField.setMaxLength(128);
+		this.uriTextField.setText(config.getUri());
+		this.uriTextField.setChangedListener(config::setUri);
+		this.addSelectableChild(this.uriTextField);
+
+		this.channelTextField = new TextFieldWidget(this.textRenderer, this.width / 2 - 100, 200, 200, 20, Text.empty());
 		this.channelTextField.setMaxLength(MAX_CHANNEL_LENGTH);
 		this.channelTextField.setText(config.getChannel());
 		this.channelTextField.setChangedListener(config::setChannel);
@@ -95,8 +102,15 @@ public class SettingsScreen extends Screen {
 		this.list.render(ctx, mouseX, mouseY, delta);
 		ctx.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, 20, 16777215);
 
-		ctx.drawTextWithShadow(this.textRenderer, Text.translatable("ping-wheel.settings.channel"), this.width / 2 - 100, 148, 10526880);
+		ctx.drawTextWithShadow(this.textRenderer, Text.translatable("ping-wheel.settings.uri"), this.width / 2 - 100, 148, 10526880);
+		this.uriTextField.render(ctx, mouseX, mouseY, delta);
+
+		ctx.drawTextWithShadow(this.textRenderer, Text.translatable("ping-wheel.settings.channel"), this.width / 2 - 100, 188, 10526880);
 		this.channelTextField.render(ctx, mouseX, mouseY, delta);
+
+		if (this.uriTextField.isHovered() && !this.uriTextField.isFocused()) {
+			ctx.drawOrderedTooltip(this.textRenderer, this.textRenderer.wrapLines(Text.translatable("ping-wheel.settings.uri.tooltip"), 140), mouseX, mouseY);
+		}
 
 		if (this.channelTextField.isHovered() && !this.channelTextField.isFocused()) {
 			ctx.drawOrderedTooltip(this.textRenderer, this.textRenderer.wrapLines(Text.translatable("ping-wheel.settings.channel.tooltip"), 140), mouseX, mouseY);

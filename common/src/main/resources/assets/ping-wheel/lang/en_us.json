@@ -14,6 +14,8 @@
 	"ping-wheel.settings.directionIndicatorVisible": "Direction Indicator",
 	"ping-wheel.settings.nameLabelForced": "Always Show Names",
 	"ping-wheel.settings.pingSize": "Ping Size: %s",
+	"ping-wheel.settings.uri": "SideChannel URI",
+	"ping-wheel.settings.uri.tooltip": "URI used to connect to RabbitMQ",
 	"ping-wheel.settings.channel": "Ping Channel",
 	"ping-wheel.settings.channel.tooltip": "You only send and receive Pings to and from players on the same channel",
 

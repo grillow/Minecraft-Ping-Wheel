@@ -19,8 +19,8 @@ import nx.pingwheel.common.helper.Draw;
 import nx.pingwheel.common.helper.MathUtils;
 import nx.pingwheel.common.helper.PingData;
 import nx.pingwheel.common.helper.Raycast;
-import nx.pingwheel.common.networking.PingLocationPacketC2S;
-import nx.pingwheel.common.networking.PingLocationPacketS2C;
+import nx.pingwheel.common.networking.PingLocationPacket;
+import nx.pingwheel.common.networking.SideChannelNetworkHandler;
 import nx.pingwheel.common.sound.DirectionalSoundInstance;
 import org.joml.Matrix4f;
 
@@ -47,14 +47,10 @@ public class ClientCore {
 		queuePing = true;
 	}
 
-	public static void onPingLocation(PacketByteBuf packet) {
-		var pingLocationPacket = PingLocationPacketS2C.parse(packet);
-
-		if (pingLocationPacket.isEmpty() || Game.player == null || Game.world == null) {
+	public static void onPingLocation(PingLocationPacket pingLocation) {
+		if (Game.player == null || Game.world == null) {
 			return;
 		}
-
-		var pingLocation = pingLocationPacket.get();
 
 		if (!pingLocation.getChannel().equals(Config.getChannel())) {
 			return;
@@ -263,7 +259,9 @@ public class ClientCore {
 			uuid = ((EntityHitResult)hitResult).getEntity().getUuid();
 		}
 
-		new PingLocationPacketC2S(Config.getChannel(), hitResult.getPos(), uuid, pingSequence, dimension).send();
+		SideChannelNetworkHandler.getInstance().send(
+			new PingLocationPacket(Config.getChannel(), hitResult.getPos(), uuid, pingSequence, dimension, Game.player.getUuid())
+		);
 	}
 
 	private static void addOrReplacePing(PingData newPing) {

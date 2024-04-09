@@ -22,8 +22,7 @@ import nx.pingwheel.common.config.ClientConfig;
 import nx.pingwheel.common.config.ConfigHandler;
 import nx.pingwheel.common.core.ClientCore;
 import nx.pingwheel.common.helper.ClientCommandBuilder;
-import nx.pingwheel.common.networking.PingLocationPacketS2C;
-import nx.pingwheel.common.networking.UpdateChannelPacketC2S;
+import nx.pingwheel.common.networking.SideChannelNetworkHandler;
 import nx.pingwheel.common.resource.ResourceReloadListener;
 import nx.pingwheel.common.screen.SettingsScreen;
 import nx.pingwheel.fabric.event.GameOverlayRenderCallback;
@@ -46,12 +45,12 @@ public class Client implements ClientModInitializer {
 
 		Registry.register(Registries.SOUND_EVENT, PING_SOUND_ID, PING_SOUND_EVENT);
 
-		registerNetworkPackets();
 		registerReloadListener();
 		registerKeyBindings();
 
 		// register client connection callback
-		ClientPlayConnectionEvents.JOIN.register((a, b, c) -> new UpdateChannelPacketC2S(ConfigHandler.getConfig().getChannel()).send());
+		ClientPlayConnectionEvents.INIT.register((handler, client) -> SideChannelNetworkHandler.getInstance().connect(ConfigHandler.getConfig().getUri()));
+		ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> SideChannelNetworkHandler.getInstance().close());
 
 		// register world render callback
 		WorldRenderEvents.END.register(ctx -> ClientCore.onRenderWorld(ctx.matrixStack(), ctx.projectionMatrix(), ctx.tickDelta()));
@@ -67,10 +66,6 @@ public class Client implements ClientModInitializer {
 				context.getSource().sendError(response);
 			}
 		})));
-	}
-
-	private void registerNetworkPackets() {
-		ClientPlayNetworking.registerGlobalReceiver(PingLocationPacketS2C.ID, (a, b, packet, c) -> ClientCore.onPingLocation(packet));
 	}
 
 	private void registerReloadListener() {
