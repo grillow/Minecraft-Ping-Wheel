@@ -10,13 +10,33 @@
 
 <div align="center">
 
-<a href="#">![Forge](https://luken.cc/badges/forge)</a>
 <a href="#">![Fabric](https://luken.cc/badges/fabric)</a>
-<a href="#">![Environment](https://luken.cc/badges/environment)</a>  
-<a href="https://www.curseforge.com/minecraft/mc-mods/ping-wheel">![Curseforge](https://luken.cc/badges/curseforge/734339)</a>
-<a href="https://modrinth.com/mod/ping-wheel">![Modrinth](https://luken.cc/badges/modrinth/QQXAdCzh)</a>
 
 </div>
+
+## Fork
+
+[Original mod](https://github.com/LukenSkyne/Minecraft-Ping-Wheel) uses the minecraft protocol to exchange packets between the client and the server. So it's impossible to use this mod without having it installed on the server side.
+
+[This fork](https://github.com/grillow/Minecraft-Ping-Wheel) makes clients exchange ping packets using a *side channel* (RabbitMQ), which allows it to be used on servers that do not have this mod installed.
+
+### Build
+
+```sh
+gradle build
+```
+
+The ```.jar``` file can be found in the ```fabric/build/libs``` directory.
+
+### Configuration
+
+1. Start RabbitMQ
+
+```docker run -d --name rabbitmq -p 127.0.0.1:5672:5672 -e RABBITMQ_DEFAULT_USER=user -e RABBITMQ_DEFAULT_PASS=password rabbitmq:latest```
+
+2. Set the correct side channel URI in the mod configuration menu (example: ```amqp://user:password@127.0.0.1:5672```)
+
+Make sure to change ```127.0.0.1``` to the correct IP address.
 
 ## About
 
